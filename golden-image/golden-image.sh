@@ -101,15 +101,14 @@ wget $ISO_URL -O $TEMP_ISO_IMAGE
 # Install libguestfs-tools on Proxmox server.
 #apt-get install libguestfs-tools
 
-# Install qemu-guest-agent on Ubuntu image.
-virt-customize -a $TEMP_ISO_IMAGE --install qemu-guest-agent
+# Install required packages in our image. QEMU Guest Agent, plus anything else we desire
+virt-customize -a $TEMP_ISO_IMAGE --install qemu-guest-agent,vim,parted,fail2ban,grc,htop,mc,tmux,tree,iftop,ufw,curl,vim-nox,net-tools,aptitude,unattended-upgrades,git,wget,snap,software-properties-common,bc,facter,tasksel
 
 # Enable password authentication in the template. Obviously, not recommended for except for testing.
 virt-customize -a $TEMP_ISO_IMAGE --run-command "sed -i 's/.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config"
 
 # Create Proxmox Template
 qm create $VM_ID --cores $CORES --memory $MEMORY --net0 virtio,bridge=$BRIDGE --ostype l26
-
 qm importdisk $VM_ID $TEMP_ISO_IMAGE $STORAGE_POOL
 qm set $VM_ID --scsihw virtio-scsi-pci --scsi0 $STORAGE_POOL:vm-$VM_ID-disk-0
 qm set $VM_ID --agent enabled=1,fstrim_cloned_disks=1
