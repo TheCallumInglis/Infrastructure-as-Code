@@ -113,6 +113,7 @@ qm importdisk $VM_ID $TEMP_ISO_IMAGE $STORAGE_POOL
 qm set $VM_ID --scsihw virtio-scsi-pci --scsi0 $STORAGE_POOL:vm-$VM_ID-disk-0
 qm set $VM_ID --agent enabled=1,fstrim_cloned_disks=1
 qm set $VM_ID --name $VM_NAME
+qm set $VM_ID --description "Created as \"Golden Image\" on $(date +%F)"
 
 # Resize disk
 qm disk resize $VM_ID scsi0 +${STORAGE}G
